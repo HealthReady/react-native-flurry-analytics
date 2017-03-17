@@ -8,6 +8,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import java.util.HashMap;
@@ -122,9 +123,23 @@ public class FlurryAnalyticsModule extends ReactContextBaseJavaModule {
 
     Map<String, String> result = new HashMap<>();
     while (iterator.hasNextKey()) {
-      String key = iterator.nextKey();
-      result.put(key, readableMap.getString(key));
-    }
+            String key = iterator.nextKey();
+            ReadableType readableType = readableMap.getType(key);
+            switch (readableType) {
+                case Null:
+                    result.put(key, key);
+                    break;
+                case Number:
+                    double tmp = readableMap.getDouble(key);
+                    result.put(key, String.valueOf(tmp));
+                    break;
+                case String:
+                    result.put(key, readableMap.getString(key));
+                    break;
+                default:
+                    throw new IllegalArgumentException("Could not convert object with key: " + key + ".");
+            }
+        }
 
     return result;
   }
