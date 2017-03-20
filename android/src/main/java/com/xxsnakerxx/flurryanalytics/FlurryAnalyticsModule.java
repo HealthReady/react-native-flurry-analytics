@@ -137,7 +137,8 @@ public class FlurryAnalyticsModule extends ReactContextBaseJavaModule {
                     result.put(key, readableMap.getString(key));
                     break;
                 default:
-                    throw new IllegalArgumentException("Could not convert object with key: " + key + ".");
+                    //throw new IllegalArgumentException("Could not convert object with key: " + key + ".");
+                    result.put(key, key);
             }
         }
 
